@@ -35,12 +35,16 @@ return [
     |
     */
 
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+    'api' => [
+        'driver' => 'jwt', // atau 'sanctum' jika menggunakan Laravel Sanctum
+        'provider' => 'users',
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
