@@ -53,7 +53,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return response()->json($product);
     }
 
     /**
@@ -69,7 +69,19 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        // Validasi input dari pengguna
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer',
+        ]);
+
+        // Update produk dengan data yang divalidasi
+        $product->update($validated);
+
+        // Mengembalikan response JSON dengan produk yang telah diperbarui
+        return response()->json($product, 200);
     }
 
     /**
@@ -77,6 +89,23 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        try {
+            $product->delete(); // Menghapus produk dari database
+    
+            return response()->json([
+                'message' => 'Produk berhasil dihapus.'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Gagal menghapus produk.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function publicIndex()
+    {
+        $products = Product::all(); // Ambil semua data produk
+        return response()->json($products);
     }
 }

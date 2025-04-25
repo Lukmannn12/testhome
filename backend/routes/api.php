@@ -27,3 +27,5 @@ Route::middleware('auth:api')->post('logout', [AuthController::class, 'logout'])
 Route::middleware('auth:api')->get('users', [AuthController::class, 'getAllUsers']);
 
 Route::middleware('auth:api')->resource('product', ProductController::class);
+
+Route::get('/public-products', [ProductController::class, 'publicIndex']);

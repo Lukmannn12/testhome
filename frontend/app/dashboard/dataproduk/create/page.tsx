@@ -14,12 +14,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios"; // Import axios
 
 export function CreateProduct() {
   const [open, setOpen] = useState(false); // kontrol dialog
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState<number | string>("");
+  const [price, setPrice] = useState<number | string>(""); 
   const [stock, setStock] = useState<number | string>("");
 
   const router = useRouter();
@@ -35,18 +36,21 @@ export function CreateProduct() {
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(productData),
-      });
+      const token = localStorage.getItem("token"); // Ambil token dari localStorage
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/product",
+        productData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (response.ok) {
-        const newProduct = await response.json();
+      if (response.status === 200) {
         setOpen(false); // TUTUP dialog
+        alert("Product created successfully!"); // Show success alert
         router.push("/dashboard/dataproduk"); // ARAHKAN
       } else {
         throw new Error("Failed to create product");
