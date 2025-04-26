@@ -23,7 +23,6 @@ export function CreateProduct() {
   const [price, setPrice] = useState<number | string>(""); 
   const [stock, setStock] = useState<number | string>("");
 
-  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -34,6 +33,8 @@ export function CreateProduct() {
       price,
       stock,
     };
+
+    console.log("Data yang dikirim:", productData); // Log data yang dikirim
 
     try {
       const token = localStorage.getItem("token"); // Ambil token dari localStorage
@@ -51,7 +52,7 @@ export function CreateProduct() {
       if (response.status === 200) {
         setOpen(false); // TUTUP dialog
         alert("Product created successfully!"); // Show success alert
-        router.push("/dashboard/dataproduk"); // ARAHKAN
+        window.location.reload() // Reload halaman
       } else {
         throw new Error("Failed to create product");
       }

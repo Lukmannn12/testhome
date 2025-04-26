@@ -43,10 +43,16 @@ class AuthController extends Controller
         $user = JWTAuth::user();
 
         $role = $user->role;
+        $name = $user->name;  // Ambil nama pengguna
+        $email = $user->email;  // Ambil email pengguna
 
         return response()->json([
             'token' => $token,
-            'role' => $role // tambahkan role ke dalam response
+            'role' => $role,
+            'name' => $name,
+            'email' => $email,
+            // tambahkan role ke dalam response
+
         ]);
     }
 
@@ -77,7 +83,23 @@ class AuthController extends Controller
         }
 
         // Mendapatkan semua pengguna jika token valid
-        $users = User::all();
+        $users = User::where('role', 'user')->get();
         return response()->json($users);
+    }
+
+    public function totalUsers()
+    {
+        try {
+            $total = User::where('role', 'user')->count();
+
+            return response()->json([
+                'total_users' => $total,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Gagal menghitung total users',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

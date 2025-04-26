@@ -1,9 +1,16 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { Dialog } from "@headlessui/react"; // Import Dialog from headlessui
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"; 
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
 
 
 const navigation = [
@@ -14,15 +21,19 @@ const navigation = [
 ];
 
 const Navbar = () => {
-  const [name, setName] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [name, setName] = useState("");
 
   useEffect(() => {
-    const user = localStorage.getItem("name"); // pastikan sudah diset saat login
-    if (user) {
-      setName(user);
-    }
+    setName(localStorage.getItem("name") || "");
   }, []);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State to toggle the mobile menu
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/login"; // redirect ke login
+  };
+
+
 
   return (
     <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
@@ -61,18 +72,19 @@ const Navbar = () => {
       {/* Desktop login */}
       <div className="hidden lg:flex lg:flex-1 lg:justify-end">
       {name ? (
-        <div className="text-sm font-semibold text-gray-900">
-          Hello, {name}
-          <button
-            onClick={() => {
-              localStorage.removeItem("name");
-              window.location.reload(); // reload page to reflect logout
-            }}
-            className="ml-4 text-blue-600 hover:underline"
-          >
-            Logout
-          </button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="text-sm font-semibold text-gray-900">
+            Hi, {name}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <a href="/profile">Edit Profile</a>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
         <a href="/login" className="text-sm font-semibold text-gray-900">
           Log in <span aria-hidden="true">&rarr;</span>

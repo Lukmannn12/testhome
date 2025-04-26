@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +28,10 @@ Route::middleware('auth:api')->post('logout', [AuthController::class, 'logout'])
 Route::middleware('auth:api')->get('users', [AuthController::class, 'getAllUsers']);
 
 Route::middleware('auth:api')->resource('product', ProductController::class);
+Route::middleware('auth:api')->resource('profile', ProfileController::class);
 
 Route::get('/public-products', [ProductController::class, 'publicIndex']);
+Route::middleware('auth:api')->get('/total-users', [AuthController::class, 'totalUsers']);
+Route::middleware('auth:api')->get('/total-product', [ProductController::class, 'totalProduct']);
+Route::middleware('auth:api')->delete('users/{id}', [ProfileController::class, 'destroy']);
+

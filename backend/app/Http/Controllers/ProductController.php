@@ -44,7 +44,7 @@ class ProductController extends Controller
         $product = Product::create($validated);
 
         // Mengembalikan response JSON dengan produk yang telah disimpan
-        return response()->json($product, 201);
+        return response()->json($product, 200);
     }
 
 
@@ -107,5 +107,15 @@ class ProductController extends Controller
     {
         $products = Product::all(); // Ambil semua data produk
         return response()->json($products);
+    }
+
+    public function totalProduct()
+    {
+        $totalProducts = Product::count();
+
+        // Mengembalikan respons API dengan jumlah total produk
+        return response()->json([
+            'total_products' => $totalProducts
+        ]);
     }
 }

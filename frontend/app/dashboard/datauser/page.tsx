@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 
 type User = {
   id: number
@@ -24,6 +25,36 @@ type User = {
 export default function DataUserPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
+
+  const handleDelete = async (id: number) => {
+    const confirmDelete = confirm("Apakah kamu yakin ingin menghapus data ini?");
+    if (!confirmDelete) return;
+  
+    try {
+      const token = localStorage.getItem("token"); // Ambil token dari localStorage
+  
+      if (!token) {
+        alert("Token tidak ditemukan, silakan login kembali.");
+        return;
+      }
+  
+      // Mengirimkan permintaan untuk menghapus user berdasarkan ID
+      await axios.delete(`http://127.0.0.1:8000/api/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      // Jika berhasil, tampilkan pesan dan perbarui state atau refresh data
+      alert("User berhasil dihapus!");
+  
+      // Jika kamu ingin menghapus user dari state tanpa reload halaman
+      setUsers(users.filter(user => user.id !== id));
+    } catch (err) {
+      console.error("Gagal menghapus data:", err);
+      alert("Terjadi kesalahan saat menghapus user.");
+    }
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -74,6 +105,12 @@ export default function DataUserPage() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell className="text-right">{user.role}</TableCell>
                 <TableCell className="text-right">{user.created_at}</TableCell>
+                <TableCell className="text-right"> <Button
+                      variant="destructive"
+                      onClick={() => handleDelete(user.id)}
+                    >
+                      Delete
+                    </Button></TableCell>
               </TableRow>
             ))
           ) : (
